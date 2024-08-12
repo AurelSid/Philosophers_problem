@@ -6,7 +6,7 @@
 /*   By: asideris <asideris@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 15:41:20 by asideris          #+#    #+#             */
-/*   Updated: 2024/08/12 12:29:31 by asideris         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:18:07 by asideris         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	ft_pickup_forks(t_philosopher *philo)
 		pthread_mutex_unlock(&philo->data->print_mutex);
 		philo->state = 'e';
 	}
-	return(0);
+	return (0);
 }
 
 void	wait_for_philosophers(t_data *data)
@@ -60,6 +60,7 @@ void	wait_for_philosophers(t_data *data)
 		pthread_join(data->philo_array[i].this_thread, NULL);
 		i++;
 	}
+	pthread_join(data->monitor, NULL);
 }
 
 int	ft_usleep(size_t milliseconds)

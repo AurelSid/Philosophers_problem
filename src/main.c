@@ -6,7 +6,7 @@
 /*   By: asideris <asideris@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 15:41:20 by asideris          #+#    #+#             */
-/*   Updated: 2024/08/12 12:59:12 by asideris         ###   ########.fr       */
+/*   Updated: 2024/08/12 13:44:39 by asideris         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int	ft_set_state(t_philosopher *philo)
 		if (arrival_time - init_time > philo->data->t_to_die)
 		{
 			printf("%d IS DEAD\n", philo->id);
-			philo->data->death_count++;
+			exit(0);
 		}
 		philo->state = 't';
 		print_status(philo->id, philo->data, "is thinking");
@@ -63,13 +63,13 @@ void	*routine(void *arg)
 	return (NULL);
 }
 
-int	ft_populate_philo_array(t_data *data)
+int	ft_init_threads(t_data *data)
 {
 	int	i;
 
 	i = 0;
 	pthread_mutex_lock(&data->starting_block);
-	while (i < data->philo_c)
+	while (i < data->philo_c )
 	{
 		data->philo_array[i].eat_count = 0;
 		data->philo_array[i].sleep_count = 0;
@@ -97,37 +97,22 @@ int	ft_populate_philo_array(t_data *data)
 	pthread_mutex_unlock(&data->starting_block);
 	return (0);
 }
-
-void	*monitor(void *arg)
-{
-	t_data	*data;
-
-	data = (t_data *)arg;
-	while (1)
-	{
-		if (data->death_count > 0)
-		{
-			wait_for_philosophers(data);
-			exit(0);
-		}
-	}
-}
 int	main(int argc, char **argv)
 {
-	t_data			data;
-	struct timeval	time;
+	t_data data;
+
+	struct timeval time;
 
 	ft_get_args(argc, argv, &data);
 	pthread_mutex_init(&data.print_mutex, NULL);
 	data.start_time = get_current_time_in_ms();
 	data.philo_array = ft_calloc(data.philo_c, sizeof(t_philosopher));
-	data.death_count = 0;
 	gettimeofday(&time, NULL);
-	if (ft_populate_philo_array(&data))
+	if (ft_init_threads(&data))
 	{
 		free(data.philo_array);
 		return (0);
 	}
-	pthread_create(&data.monitor, NULL, monitor, (void *)&data);
+	wait_for_philosophers(&data);
 	return (0);
 }

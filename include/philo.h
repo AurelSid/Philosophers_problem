@@ -20,6 +20,8 @@ typedef struct s_philosopher
 	pthread_mutex_t		own_fork;
 	pthread_mutex_t		*next_fork;
 	t_data				*data;
+	long				start_think_time;
+	long				end_think_time;
 
 }						t_philosopher;
 
@@ -37,6 +39,7 @@ typedef struct s_data
 	long				start_time;
 	pthread_mutex_t		print_mutex;
 	int					death_count;
+	pthread_mutex_t		death_c_lock;
 	pthread_t			monitor;
 
 }						t_data;
