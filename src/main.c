@@ -6,7 +6,7 @@
 /*   By: asideris <asideris@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 15:41:20 by asideris          #+#    #+#             */
-/*   Updated: 2024/08/13 16:53:00 by asideris         ###   ########.fr       */
+/*   Updated: 2024/08/13 19:45:49 by asideris         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,6 @@ int	ft_set_state(t_philosopher *philo)
 		philo->eat_count++;
 		if (philo->eat_count >= philo->data->min_meals)
 			philo->data->finished_philosphers++;
-		// printf("meal count : %d - finished philos: %d\n", philo->eat_count,
-		// 	philo->data->finished_philosphers);
 		pthread_mutex_unlock(philo->next_fork);
 		pthread_mutex_unlock(&philo->own_fork);
 		philo->state = 's';
@@ -53,8 +51,6 @@ void	*routine(void *arg)
 	{
 		ft_pickup_forks(philo);
 		ft_set_state(philo);
-		if (philo->data->death_count > 0 || philo->data->finished_philosphers >= philo->data->philo_c)
-			break ;
 	}
 	pthread_mutex_unlock(&philo->data->starting_block);
 	return (NULL);
@@ -73,7 +69,7 @@ int	ft_init_threads(t_data *data)
 		data->philo_array[i].state = 't';
 		data->philo_array[i].data = data;
 		data->philo_array[i].id = i + 1;
-		data->philo_array[i].time_since_last_meal = 0;
+		data->philo_array[i].time_of_last_meal = data->start_time;
 		i++;
 	}
 	i = 0;

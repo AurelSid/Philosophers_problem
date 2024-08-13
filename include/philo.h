@@ -21,7 +21,8 @@ typedef struct s_philosopher
 	pthread_mutex_t		*next_fork;
 	t_data				*data;
 	long				time_of_new_meal;
-	long				time_since_last_meal;
+	long				time_of_last_meal;
+	long				time_waited;
 
 }						t_philosopher;
 
