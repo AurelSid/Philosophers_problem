@@ -6,7 +6,7 @@
 /*   By: asideris <asideris@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 17:45:07 by asideris          #+#    #+#             */
-/*   Updated: 2024/08/06 15:14:41 by asideris         ###   ########.fr       */
+/*   Updated: 2024/08/13 15:51:47 by asideris         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ int	ft_get_args(int argc, char **argv, t_data *data)
 	data->t_to_die = ft_atoi(argv[2]);
 	data->t_to_eat = ft_atoi(argv[3]);
 	data->t_to_sleep = ft_atoi(argv[4]);
-	if (argc == 7)
+	if (argc == 6)
 		data->min_meals = ft_atoi(argv[5]);
 	else
-		data->min_meals = 0;
+		data->min_meals = 1215752192;
 	return (0);
 }

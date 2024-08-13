@@ -20,8 +20,8 @@ typedef struct s_philosopher
 	pthread_mutex_t		own_fork;
 	pthread_mutex_t		*next_fork;
 	t_data				*data;
-	long				start_think_time;
-	long				end_think_time;
+	long				time_of_new_meal;
+	long				time_since_last_meal;
 
 }						t_philosopher;
 
@@ -39,8 +39,9 @@ typedef struct s_data
 	long				start_time;
 	pthread_mutex_t		print_mutex;
 	int					death_count;
-	pthread_mutex_t		death_c_lock;
+	pthread_mutex_t		death_count_mutex;
 	pthread_t			monitor;
+	int					finished_philosphers;
 
 }						t_data;
 
@@ -52,5 +53,7 @@ int						ft_usleep(size_t milliseconds);
 long					get_current_time_in_ms(void);
 void					print_status(int philosopher_id, t_data *data,
 							const char *status);
+void					*monitor(void *arg);
+int						ft_reset_clock(t_philosopher *philo);
 
 #endif
