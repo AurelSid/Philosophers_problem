@@ -6,7 +6,7 @@
 /*   By: asideris <asideris@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/05 15:41:20 by asideris          #+#    #+#             */
-/*   Updated: 2024/08/13 19:45:49 by asideris         ###   ########.fr       */
+/*   Updated: 2024/08/14 15:37:16 by asideris         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	ft_set_state(t_philosopher *philo)
 		print_status(philo->id, philo->data, "is eating");
 		ft_usleep(philo->data->t_to_eat);
 		philo->eat_count++;
-		if (philo->eat_count >= philo->data->min_meals)
+		if (philo->eat_count == philo->data->min_meals)
 			philo->data->finished_philosphers++;
 		pthread_mutex_unlock(philo->next_fork);
 		pthread_mutex_unlock(&philo->own_fork);
@@ -38,7 +38,6 @@ int	ft_set_state(t_philosopher *philo)
 	}
 	return (1);
 }
-
 void	*routine(void *arg)
 {
 	t_philosopher	*philo;
@@ -46,9 +45,12 @@ void	*routine(void *arg)
 	philo = (t_philosopher *)arg;
 	pthread_mutex_lock(&philo->data->starting_block);
 	if (philo->id % 2 == 0)
-		ft_usleep(200);
+		usleep(100);
 	while (1)
 	{
+		if (philo->data->finished_philosphers >= philo->data->philo_c
+			|| philo->data->death_count > 0)
+			break ;
 		ft_pickup_forks(philo);
 		ft_set_state(philo);
 	}
@@ -82,10 +84,14 @@ int	ft_init_threads(t_data *data)
 	i = 0;
 	while (i < data->philo_c)
 	{
-		pthread_create(&data->philo_array[i].this_thread, NULL, routine,
-			(void *)&data->philo_array[i]);
+		if (pthread_create(&data->philo_array[i].this_thread, NULL, routine,
+				(void *)&data->philo_array[i]) != 0)
+		{
+			wait_for_philosophers(data, i);
+			return(1);
+		}
 		if (pthread_mutex_init(&data->philo_array[i].own_fork, NULL))
-			return (1);
+			return (0);
 		i++;
 	}
 	pthread_mutex_unlock(&data->starting_block);
@@ -96,7 +102,8 @@ int	main(int argc, char **argv)
 	t_data			data;
 	struct timeval	time;
 
-	ft_get_args(argc, argv, &data);
+	if (!ft_get_args(argc, argv, &data))
+		return (0);
 	pthread_mutex_init(&data.print_mutex, NULL);
 	data.start_time = get_current_time_in_ms();
 	data.philo_array = ft_calloc(data.philo_c, sizeof(t_philosopher));
@@ -108,7 +115,7 @@ int	main(int argc, char **argv)
 		return (0);
 	}
 	pthread_create(&data.monitor, NULL, monitor, &data);
-	wait_for_philosophers(&data);
 	pthread_join(data.monitor, NULL);
+	wait_for_philosophers(&data, data.philo_c);
 	return (0);
 }

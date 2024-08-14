@@ -49,7 +49,8 @@ typedef struct s_data
 int						ft_get_args(int argc, char **argv, t_data *data);
 int						ft_print_philos(t_data *data);
 int						ft_pickup_forks(t_philosopher *philo);
-void					wait_for_philosophers(t_data *data);
+
+void					wait_for_philosophers(t_data *data, int index);
 int						ft_usleep(size_t milliseconds);
 long					get_current_time_in_ms(void);
 void					print_status(int philosopher_id, t_data *data,
